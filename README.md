@@ -68,7 +68,7 @@ Arguments:
 
 ### Classic icons: `win_shortcut.pifmgr`
 
-`pifmgr.dll` has been part of Windows since time immemorial. It contains 38 retro icons (image courtesy of [mvps.org](https://mvps.org/serenitymacros/iconlist.html)):
+`pifmgr.dll` has been part of Windows since time immemorial. It contains 38 retro icons (image courtesy of [mvps.org](https://mvps.org/serenitymacros/iconlist.html)):
 
 ![Icons in pifmgr.dll](images/pifmgr.png)
 
