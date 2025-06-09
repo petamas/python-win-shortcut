@@ -76,7 +76,7 @@ def create_shortcut(
         # > This method can also return various storage errors.
 
         if ret==comtypes.hresult.S_FALSE:
-            # By default, S_FALSE would be treated as ERROR_INVALID_FUNCTION, because both have the value of 0x1, so we map it to E_FAIL instead
-            ret = comtypes.hresult.E_FAIL
-
-        raise ctypes.WinError(ret)
+            # By default, S_FALSE would be treated as ERROR_INVALID_FUNCTION, because both have the value of 0x1, so we map it to ERROR_CANNOT_MAKE instead
+            raise ctypes.WinError(82, 'IPersistFile::Save() returned S_FALSE')
+        else:
+            raise ctypes.WinError(ret)
