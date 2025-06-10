@@ -8,11 +8,10 @@ from enum import IntEnum
 from pathlib import Path
 from typing import Optional, Sequence
 
-import comtypes.client # type: ignore[import-untyped]
-import comtypes.gen # type: ignore[import-untyped]
-import comtypes.hresult # type: ignore[import-untyped]
-import comtypes.shelllink # type: ignore[import-untyped]
-import comtypes.persist # type: ignore[import-untyped]
+import comtypes.client
+import comtypes.hresult
+import comtypes.shelllink
+import comtypes.persist
 import mslex
 
 class WindowStyle(IntEnum):
@@ -49,7 +48,7 @@ def create_shortcut(
         window_style = WindowStyle.NORMAL
 
 
-    shell_link = comtypes.client.CreateObject(comtypes.shelllink.ShellLink)
+    shell_link: comtypes.shelllink.IShellLinkW = comtypes.client.CreateObject(comtypes.shelllink.ShellLink)
 
     shell_link.SetPath(str(cmd[0]))
     shell_link.SetArguments(mslex.join([str(arg) for arg in cmd[1:]], for_cmd=False))
@@ -66,7 +65,7 @@ def create_shortcut(
     if working_directory is not None:
         shell_link.SetWorkingDirectory(str(working_directory))
 
-    persist_file = shell_link.QueryInterface(comtypes.persist.IPersistFile)
+    persist_file: comtypes.persist.IPersistFile = shell_link.QueryInterface(comtypes.persist.IPersistFile)
     ret = persist_file.Save(str(path.absolute()), True)
 
     if ret != comtypes.hresult.S_OK:

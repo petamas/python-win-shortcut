@@ -30,3 +30,7 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/petamas/python-win-shortcut"
 "Bug Tracker" = "https://github.com/petamas/python-win-shortcut/issues"
+
+[[tool.mypy.overrides]]
+module = ["comtypes.*"]
+follow_untyped_imports = true
