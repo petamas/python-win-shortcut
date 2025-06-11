@@ -5,6 +5,8 @@ __all__ = [
 import ctypes
 from pathlib import Path
 
+from win_shortcut._winapi import GetShortPathNameW
+
 def get_short_path(path: Path) -> Path:
     """
     Returns the short (8.3) path form (as a `pathlib.Path` object) of the specified path. This can be useful for getting around path length limitations and quoting issues (short paths contain no spaces).
@@ -15,13 +17,16 @@ def get_short_path(path: Path) -> Path:
     - `path: Path`: File or directory path to query the short form of.
     """
 
+    bufsize = 260
     while True:
-        buf_size = ctypes.windll.kernel32.GetShortPathNameW(str(path), None, 0)
-        output = ctypes.create_unicode_buffer(buf_size)
+        buffer = ctypes.create_unicode_buffer(bufsize)
 
-        result = ctypes.windll.kernel32.GetShortPathNameW(str(path), output, buf_size)
-        if result == 0:
-            raise ctypes.WinError()
-
-        if result==buf_size-1:
-            return Path(ctypes.wstring_at(output))
+        ret = GetShortPathNameW(str(path), buffer, bufsize)
+        if ret==0:
+            # an error happened
+            raise ctypes.WinError(ctypes.GetLastError())
+        elif ret > bufsize:
+            # buffer was too small, retry with properly sized buffer
+            bufsize = ret
+        else:
+            return Path(ctypes.wstring_at(buffer))

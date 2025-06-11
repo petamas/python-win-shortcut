@@ -11,9 +11,8 @@ __all__ = [
 import ctypes
 from pathlib import Path
 
-from comtypes import GUID # type: ignore[import-untyped]
-
 from win_shortcut._known_folder_id import KnownFolderId
+from win_shortcut._winapi import ByRef, GUID, CoTaskMemFree, SHGetKnownFolderPath
 
 def get_known_folder(folderid: str) -> Path:
     """
@@ -27,12 +26,10 @@ def get_known_folder(folderid: str) -> Path:
 
     output = ctypes.c_wchar_p()
     try:
-        ret = ctypes.windll.shell32.SHGetKnownFolderPath(GUID(folderid), 0, None, ctypes.byref(output))
-        if ret != 0:
-            raise ctypes.WinError(ret)
+        SHGetKnownFolderPath(GUID(folderid), 0, None, ByRef(output)) # HRESULT errors raise OSError automatically
         return Path(ctypes.wstring_at(output))
     finally:
-        ctypes.oledll.ole32.CoTaskMemFree(output)
+        CoTaskMemFree(output)
 
 def get_desktop_folder() -> Path:
     """
